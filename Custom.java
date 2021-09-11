@@ -60,4 +60,3 @@ class MyArrayDataException extends Exception{
         return "the number can not be string can not to convert to int";
     }
 }
-
