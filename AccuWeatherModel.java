@@ -47,7 +47,22 @@ public class AccuWeatherModel implements WeatherModul{
 
                 Response oneDayForecasResponse = okHttpClient.newCall(request).execute();
                 String weatherResponse = Objects.requireNonNull(oneDayForecasResponse.body()).string();
-                System.out.println(weatherResponse);
+                
+               double temperatureMax = objectMapper.readTree(weatherResponse).at("/DailyForecasts")
+                        .get(0)
+                        .at("/Temperature/Maximum/Value")
+                        .asDouble();
+                temperatureMax = (5.0/9.0) * (temperatureMax - 32);
+
+                double temperatureMin = objectMapper.readTree(weatherResponse).at("/DailyForecasts")
+                        .get(0)
+                        .at("/Temperature/Minimum/Value")
+                        .asDouble();
+
+                temperatureMin = (5.0/9.0) * (temperatureMin - 32);
+
+                System.out.println( "Temperature  " + String.format("%.2f",temperatureMax) + " - "
+                                                    + String.format("%.2f",temperatureMin) + " " + city );
 
                 break;
 
@@ -71,6 +86,24 @@ public class AccuWeatherModel implements WeatherModul{
                 Response fiveDayForecasResponse = okHttpClient.newCall(request2).execute();
                 String weatherResponse2 = Objects.requireNonNull(fiveDayForecasResponse.body()).string();
 
+                for (int i = 0; i < 5; i++) {
+                    double temperatureMaxDay5 = objectMapper.readTree(weatherResponse2).at("/DailyForecasts")
+                            .get(i)
+                            .at("/Temperature/Maximum/Value")
+                            .asDouble();
+                    temperatureMaxDay5 = (5.0/9.0) * (temperatureMaxDay5 - 32);
+
+
+                    double temperatureMin5Day = objectMapper.readTree(weatherResponse2).at("/DailyForecasts")
+                            .get(i)
+                            .at("/Temperature/Minimum/Value")
+                            .asDouble();
+                    temperatureMin5Day = (5.0/9.0) * (temperatureMin5Day - 32);
+
+
+                    System.out.println("Day " + (i+1) + " Temperature  " + String.format("%.2f", temperatureMin5Day) + " - "
+                            + String.format("%.2f", temperatureMaxDay5) );
+                }
                 System.out.println(weatherResponse2);
 
                 break;
